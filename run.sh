@@ -1,6 +1,6 @@
 #!/bin/bash
-
 set -ex
+
 
 login_url="https://dashboard.cpolar.com/login"
 status_url="https://dashboard.cpolar.com/status"
@@ -40,6 +40,5 @@ echo "URL: $url"
 echo "Port: $port"
 
 
-python2 local.py -s $url -p $port -l 1086 -k hello
-
-
+script_dir=$(dirname "$0")
+python2 $script_dir/local.py -s $url -p $port -l 1086 -k hello
