@@ -1,5 +1,6 @@
 import re
 import requests
+import sys
 
 def extract_csrf_token(url):
     try:
@@ -14,7 +15,6 @@ def extract_csrf_token(url):
         # 获取 CSRF 令牌的值
         if matches:
             csrf_token = matches.group(1)
-            print(csrf_token)
             return csrf_token
         else:
             return None
@@ -44,7 +44,13 @@ def login(username, password, url):
         response = session.post(url, data=login_data)
         response.raise_for_status()
 
-        return session  # 返回保存登录会话信息的对象
+        # 检查登录是否成功
+        if 'Welcome, ' + username in response.text:
+            print("登录成功")
+            return session  # 返回保存登录会话信息的对象
+        else:
+            print("登录失败")
+            return None
     except Exception as e:
         print("登录时出错:", e)
         return None
@@ -74,37 +80,63 @@ def save_content_to_file(content_list, filename):
     except Exception as e:
         print("保存内容时出错:", e)
 
+def get_first_line_content(filename):
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            first_line = f.readline().strip()
+            return first_line.split(':')
+    except Exception as e:
+        print("读取文件时出错:", e)
+        return None
+
 def main():
     login_url = "https://dashboard.cpolar.com/login"
     other_url = "https://dashboard.cpolar.com/status"
-    while True:
-        choice = input("请输入数字 1（获取网页内容并保存）, 2（显示上次获取的内容）, 或 3（退出）: ")
-        
-        if choice == '1':
-            password = input("请输入密码: ")
-
-            # 登录
-            session = login("1028265636@qq.com", password, login_url)
-            if session:
-                # 登录成功后获取其他页面的内容
-                content_list = get_content_after_login(session, other_url)
-                if content_list:
-                    # 保存内容到文件
-                    save_content_to_file(content_list, 'output.txt')
+    
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '2':
+            if len(sys.argv) > 2:
+                choice = sys.argv[2]
+                if choice == '1':
+                    print(get_first_line_content('output.txt')[0])
+                elif choice == '2':
+                    print(get_first_line_content('output.txt')[1])
+                else:
+                    print("无效的选项")
             else:
-                print("登录失败或发生错误")
-        elif choice == '2':
-            try:
-                with open('output.txt', 'r', encoding='utf-8') as f:
-                    print("上次获取的内容:")
-                    print(f.read())
-            except FileNotFoundError:
-                print("文件不存在，请先执行选项1获取内容。")
-        elif choice == '3':
-            print("已退出程序。")
-            break
+                print("缺少参数")
         else:
-            print("无效的选项，请重新输入。")
+            print("无效的选项")
+    else:
+        while True:
+            choice = input("请输入数字 1（获取网页内容并保存）, 2（显示上次获取的内容）, 或 3（退出）: ")
+            
+            if choice == '1':
+                username = input("请输入用户名: ")
+                password = input("请输入密码: ")
+
+                # 登录
+                session = login(username, password, login_url)
+                if session:
+                    # 登录成功后获取其他页面的内容
+                    content_list = get_content_after_login(session, other_url)
+                    if content_list:
+                        # 保存内容到文件
+                        save_content_to_file(content_list, 'output.txt')
+                else:
+                    print("登录失败或发生错误")
+            elif choice == '2':
+                try:
+                    with open('output.txt', 'r', encoding='utf-8') as f:
+                        print("上次获取的内容:")
+                        print(f.read())
+                except FileNotFoundError:
+                    print("文件不存在，请先执行选项1获取内容。")
+            elif choice == '3':
+                print("已退出程序。")
+                break
+            else:
+                print("无效的选项，请重新输入。")
 
 if __name__ == "__main__":
     main()
