@@ -110,7 +110,7 @@ def main():
             choice = input("请输入数字 1（获取网页内容并保存）, 2（显示上次获取的内容）, 或 3（退出）: ")
             
             if choice == '1':
-                username = input("请输入用户名: ")
+                username = "1028265636@qq.com"
                 password = input("请输入密码: ")
 
                 # 登录
