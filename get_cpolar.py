@@ -44,13 +44,7 @@ def login(username, password, url):
         response = session.post(url, data=login_data)
         response.raise_for_status()
 
-        # 检查登录是否成功
-        if 'Welcome, ' + username in response.text:
-            print("登录成功")
-            return session  # 返回保存登录会话信息的对象
-        else:
-            print("登录失败")
-            return None
+        return session  # 返回保存登录会话信息的对象
     except Exception as e:
         print("登录时出错:", e)
         return None
@@ -73,7 +67,9 @@ def get_content_after_login(session, url):
 
 def save_content_to_file(content_list, filename):
     try:
-        with open(filename, 'w', encoding='utf-8') as f:
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        file_path = os.path.join(script_dir, filename)
+        with open(file_path, 'w', encoding='utf-8') as f:
             for item in content_list:
                 f.write(f"{item[0]}:{item[1]}\n")
         print("内容已保存到文件:", filename)
@@ -82,7 +78,9 @@ def save_content_to_file(content_list, filename):
 
 def get_first_line_content(filename):
     try:
-        with open(filename, 'r', encoding='utf-8') as f:
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        file_path = os.path.join(script_dir, filename)
+        with open(file_path, 'r', encoding='utf-8') as f:
             first_line = f.readline().strip()
             return first_line.split(':')
     except Exception as e:
@@ -127,7 +125,9 @@ def main():
                     print("登录失败或发生错误")
             elif choice == '2':
                 try:
-                    with open('output.txt', 'r', encoding='utf-8') as f:
+                    script_dir = os.path.dirname(os.path.realpath(__file__))
+                    file_path = os.path.join(script_dir, 'output.txt')
+                    with open(file_path, 'r', encoding='utf-8') as f:
                         print("上次获取的内容:")
                         print(f.read())
                 except FileNotFoundError:
