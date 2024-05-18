@@ -1,10 +1,10 @@
 #!/bin/bash
 set -ex
 
-
+script_dir=$(dirname "$0")
 login_url="https://dashboard.cpolar.com/login"
 status_url="https://dashboard.cpolar.com/status"
-cookies_file="/Users/tellme/Shadowsocks/cookies.txt"
+cookies_file="$script_dir/cookies.txt"
 
 
 csrf_token=$(curl $login_url | grep -o '<input type="hidden" name="csrf_token" value="[^"]*"' | awk -F'value="' '{print $2}' | awk -F'"' '{print $1}')
@@ -40,5 +40,4 @@ echo "URL: $url"
 echo "Port: $port"
 
 
-script_dir=$(dirname "$0")
 python2 $script_dir/local.py -s $url -p $port -l 1086 -k hello
