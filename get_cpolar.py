@@ -14,6 +14,7 @@ def extract_csrf_token(url):
         # 获取 CSRF 令牌的值
         if matches:
             csrf_token = matches.group(1)
+            print(csrf_token)
             return csrf_token
         else:
             return None
@@ -43,13 +44,7 @@ def login(username, password, url):
         response = session.post(url, data=login_data)
         response.raise_for_status()
 
-        # 检查登录是否成功
-        if 'Welcome, ' + username in response.text:
-            print("登录成功")
-            return session  # 返回保存登录会话信息的对象
-        else:
-            print("登录失败")
-            return None
+        return session  # 返回保存登录会话信息的对象
     except Exception as e:
         print("登录时出错:", e)
         return None
