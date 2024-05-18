@@ -2,6 +2,7 @@ import os
 import re
 import requests
 import sys
+import getpass
 
 def extract_csrf_token(url):
     try:
@@ -112,7 +113,7 @@ def main():
             
             if choice == '1':
                 username = "1028265636@qq.com"
-                password = input("请输入密码: ")
+                password = getpass.getpass("请输入密码: ")
 
                 # 登录
                 session = login(username, password, login_url)
